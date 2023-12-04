@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Grid } from "@mui/material";
+import { Button, Grid, Typography } from "@mui/material";
+import wtf from "wtf_wikipedia";
 
 const LocationInfo = () => {
   const [city, setCity] = useState("");
-  const [translation, setTranslation] = useState("");
+  const [cityInfo, setCityInfo] = useState(null);
   const [street, setStreet] = useState("");
   const [previousLocation, setPreviousLocation] = useState(null);
   const [uniqueCityNames, setUniqueCityNames] = useState([]);
+  const [lastRefreshed, setLastRefreshed] = useState(null);
 
   useEffect(() => {
     // Function to calculate the distance between two points (in meters)
@@ -77,6 +79,12 @@ const LocationInfo = () => {
           )?.long_name;
 
           setCity(extractedCity || "");
+          const wikipediaData = await wtf.fetch(extractedCity);
+
+          // Extracting short description from Wikipedia data
+          const shortDescription = wikipediaData?.sections()?.[0]?._wiki;
+          setCityInfo(shortDescription || "");
+
           extractedStreet = data.results[0]?.address_components.find(
             (component) => component.types.includes("route")
           )?.long_name;
@@ -85,10 +93,6 @@ const LocationInfo = () => {
         } else {
           // Handle the case where a city name is not found
         }
-
-        const extractedTranslation = ""; // You need to implement translation logic
-
-        setTranslation(extractedTranslation || "");
       } catch (error) {
         console.error("Error fetching location information:", error);
       }
@@ -96,6 +100,7 @@ const LocationInfo = () => {
 
     // Function to get the user's current location
     const getCurrentLocation = () => {
+      setLastRefreshed(new Date().toLocaleTimeString());
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
@@ -132,10 +137,10 @@ const LocationInfo = () => {
 
     // Clear the timer when the component is unmounted
     return () => clearInterval(locationCheckTimer);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [previousLocation]);
 
-  const announceCity = (cityName) => {
+  const announce = (cityName) => {
     if ("speechSynthesis" in window) {
       const synthesis = window.speechSynthesis;
       const utterance = new SpeechSynthesisUtterance(cityName);
@@ -145,7 +150,10 @@ const LocationInfo = () => {
   };
 
   const handleAnnounce = () => {
-    announceCity(city);
+    announce(city);
+    if (cityInfo) {
+      announce(cityInfo);
+    }
   };
 
   return (
@@ -158,10 +166,10 @@ const LocationInfo = () => {
       justifyContent={"center"}
     >
       <Grid item>
-        <strong>City:</strong> {city}
+        <Typography variant={"h4"}>{city}</Typography>
       </Grid>
       <Grid item>
-        <strong>Translation:</strong> {translation}
+        <Typography variant={"body1"}>{cityInfo}</Typography>
       </Grid>
       <Grid item>
         <strong>Street:</strong> {street}
@@ -177,7 +185,14 @@ const LocationInfo = () => {
         </Grid>
       )}
       <Grid item>
-        <button onClick={handleAnnounce}>Announce City</button>
+        <Button variant="contained" onClick={handleAnnounce}>
+          Announce
+        </Button>
+      </Grid>
+      <Grid item>
+        <Typography variant={"caption"}>
+          Last refreshed: {lastRefreshed}
+        </Typography>
       </Grid>
     </Grid>
   );
