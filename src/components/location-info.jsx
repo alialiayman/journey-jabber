@@ -169,6 +169,11 @@ const LocationInfo = () => {
         <Typography variant={"h4"}>{city}</Typography>
       </Grid>
       <Grid item>
+        <Button variant="contained" onClick={handleAnnounce}>
+          Announce
+        </Button>
+      </Grid>
+      <Grid item>
         <Typography variant={"body1"}>{cityInfo}</Typography>
       </Grid>
       <Grid item>
@@ -184,11 +189,6 @@ const LocationInfo = () => {
           </ul>
         </Grid>
       )}
-      <Grid item>
-        <Button variant="contained" onClick={handleAnnounce}>
-          Announce
-        </Button>
-      </Grid>
       <Grid item>
         <Typography variant={"caption"}>
           Last refreshed: {lastRefreshed}
