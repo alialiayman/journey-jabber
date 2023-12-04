@@ -6,6 +6,7 @@ const LocationInfo = () => {
   const [translation, setTranslation] = useState("");
   const [street, setStreet] = useState("");
   const [previousLocation, setPreviousLocation] = useState(null);
+  const [uniqueCityNames, setUniqueCityNames] = useState([]);
 
   useEffect(() => {
     // Function to calculate the distance between two points (in meters)
@@ -43,6 +44,26 @@ const LocationInfo = () => {
         }
 
         const data = await response.json();
+
+        const politicalResult = data.results
+          .filter(
+            (result) =>
+              result.types.includes("locality") ||
+              result.types.includes("political")
+          )
+          .map((result) => result.address_components);
+
+        politicalResult.forEach((result) => {
+          result.forEach((component) => {
+            if (uniqueCityNames.includes(component.long_name)) {
+              return;
+            }
+            uniqueCityNames.push(component.long_name);
+          });
+        });
+
+        setUniqueCityNames(uniqueCityNames);
+
         const cityResult = data.results.find(
           (result) =>
             result.types.includes("locality") ||
@@ -54,9 +75,10 @@ const LocationInfo = () => {
           extractedCity = cityResult.address_components.find((component) =>
             component.types.includes("locality")
           )?.long_name;
+
           setCity(extractedCity || "");
-          extractedStreet = data.results[0]?.address_components.find((component) =>
-            component.types.includes("route")
+          extractedStreet = data.results[0]?.address_components.find(
+            (component) => component.types.includes("route")
           )?.long_name;
 
           setStreet(extractedStreet || "");
@@ -102,7 +124,6 @@ const LocationInfo = () => {
       }
     };
 
-
     // Call the function to get the initial location
     getCurrentLocation();
 
@@ -111,6 +132,7 @@ const LocationInfo = () => {
 
     // Clear the timer when the component is unmounted
     return () => clearInterval(locationCheckTimer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [previousLocation]);
 
   const announceCity = (cityName) => {
@@ -120,6 +142,13 @@ const LocationInfo = () => {
 
       synthesis.speak(utterance);
     }
+  };
+
+  const handleAnnounce = () => {
+    announceCity(city);
+    uniqueCityNames.forEach((cityName) => {
+      announceCity(cityName);
+    });
   };
 
   return (
@@ -141,8 +170,8 @@ const LocationInfo = () => {
         <strong>Street:</strong> {street}
       </Grid>
       <Grid item>
-        <button onClick={() => announceCity(city)}>Announce City</button>
-        </Grid>
+        <button onClick={handleAnnounce}>Announce City</button>
+      </Grid>
     </Grid>
   );
 };
