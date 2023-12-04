@@ -146,9 +146,6 @@ const LocationInfo = () => {
 
   const handleAnnounce = () => {
     announceCity(city);
-    uniqueCityNames.forEach((cityName) => {
-      announceCity(cityName);
-    });
   };
 
   return (
@@ -169,6 +166,16 @@ const LocationInfo = () => {
       <Grid item>
         <strong>Street:</strong> {street}
       </Grid>
+      {uniqueCityNames.length > 0 && (
+        <Grid item>
+          <strong>Unique City Names:</strong>
+          <ul>
+            {uniqueCityNames.map((cityName) => (
+              <li key={cityName}>{cityName}</li>
+            ))}
+          </ul>
+        </Grid>
+      )}
       <Grid item>
         <button onClick={handleAnnounce}>Announce City</button>
       </Grid>
