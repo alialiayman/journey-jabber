@@ -1,10 +1,10 @@
 import "./App.css";
-import LocationInfo from "./components/location-info";
+import Main from "./components/main";
 
 function App() {
   return (
     <div className="App">
-      <LocationInfo />
+      <Main />
     </div>
   );
 }
