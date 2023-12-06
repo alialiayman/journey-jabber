@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Button, Grid, Typography } from "@mui/material";
+import { Button, Grid, Typography, Box } from "@mui/material";
+import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import wtf from "wtf_wikipedia";
 
+const wikiSectionsCategories = ["History", "Geography", "Etymology"];
+
 const LocationInfo = () => {
-  const [city, setCity] = useState("");
+  const [city, setCity] = useState({});
   const [cityInfo, setCityInfo] = useState(null);
   const [street, setStreet] = useState("");
   const [previousLocation, setPreviousLocation] = useState(null);
   const [uniqueCityNames, setUniqueCityNames] = useState([]);
+  const [showUniqueCities, setToggleShowUniqueCities] = useState(false);
   const [lastRefreshed, setLastRefreshed] = useState(null);
 
   useEffect(() => {
-    // Function to calculate the distance between two points (in meters)
+    const interestingLocations = {};
     const getDistance = (point1, point2) => {
       const R = 6371; // Radius of the Earth in kilometers
       const dLat = deg2rad(point2.lat - point1.lat);
@@ -26,16 +30,11 @@ const LocationInfo = () => {
       const distance = R * c * 1000; // Convert to meters
       return distance;
     };
-
-    // Function to convert degrees to radians
     const deg2rad = (deg) => {
       return deg * (Math.PI / 180);
     };
 
-    // Function to query Google Places API based on the location
     const queryGooglePlacesAPI = async (location) => {
-      // Implement your logic to query Google Places API here
-      // You can use the location (latitude and longitude) to get city information
       try {
         const response = await fetch(
           `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.lat},${location.lng}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`
@@ -46,53 +45,52 @@ const LocationInfo = () => {
         }
 
         const data = await response.json();
+        const results = data.results;
 
-        const politicalResult = data.results
-          .filter(
-            (result) =>
-              result.types.includes("locality") ||
-              result.types.includes("political")
-          )
-          .map((result) => result.address_components);
-
-        politicalResult.forEach((result) => {
-          result.forEach((component) => {
-            if (uniqueCityNames.includes(component.long_name)) {
-              return;
-            }
-            uniqueCityNames.push(component.long_name);
+        results.forEach((element) => {
+          if (!interestingLocations[element.formatted_address]) {
+            interestingLocations[element.formatted_address] = {};
+          }
+          element.types.forEach((type) => {
+            interestingLocations[element.formatted_address][type] = {};
           });
         });
 
-        setUniqueCityNames(uniqueCityNames);
+        const political = Object.entries(interestingLocations)
+          .filter((e) => e[1]["political"] && !e[1]["country"])
+          .sort((a, b) => {
+            if (a[1]["locality"]) {
+              return -1;
+            }
+            const aAdministrativeLevel = Object.keys(a[1]).find((x) =>
+              x.startsWith("administrative")
+            );
+            const aNumber = aAdministrativeLevel?.match(/[1-9]/)?.[0] || 0;
+            const bAdministrativeLevel = Object.keys(b[1]).find((x) =>
+              x.startsWith("administrative")
+            );
+            const bNumber = bAdministrativeLevel?.match(/[1-9]/)?.[0] || 0;
+            if (aNumber < bNumber) {
+              return 1;
+            }
 
-        const cityResult = data.results.find(
-          (result) =>
-            result.types.includes("locality") ||
-            result.types.includes("political")
-        );
-        let extractedCity;
-        let extractedStreet;
-        if (cityResult) {
-          extractedCity = cityResult.address_components.find((component) =>
-            component.types.includes("locality")
-          )?.long_name;
+            return 1;
+          });
 
-          setCity(extractedCity || "");
-          const wikipediaData = await wtf.fetch(extractedCity);
+        setCity(political);
+        const wikiString = political[0][0]
+          .replace(/\d+/g, "")
+          .split(",")[0]
+          .trim();
+        const wikipediaData = await wtf.fetch(wikiString);
+        setCityInfo(wikipediaData);
 
-          // Extracting short description from Wikipedia data
-          const shortDescription = wikipediaData?.sections()?.[0]?._wiki;
-          setCityInfo(shortDescription || "");
+        const extractedStreet = results[0]?.address_components.find(
+          (component) => component.types.includes("route")
+        )?.long_name;
 
-          extractedStreet = data.results[0]?.address_components.find(
-            (component) => component.types.includes("route")
-          )?.long_name;
-
-          setStreet(extractedStreet || "");
-        } else {
-          // Handle the case where a city name is not found
-        }
+        setStreet(extractedStreet || "");
+        setUniqueCityNames(interestingLocations);
       } catch (error) {
         console.error("Error fetching location information:", error);
       }
@@ -115,7 +113,6 @@ const LocationInfo = () => {
               getDistance(newLocation, previousLocation) > 1000
             ) {
               setPreviousLocation(newLocation);
-              // Call a function to query Google Places API for city information
               queryGooglePlacesAPI(newLocation);
             }
           },
@@ -150,10 +147,17 @@ const LocationInfo = () => {
   };
 
   const handleAnnounce = () => {
-    announce(city);
-    if (cityInfo) {
-      announce(cityInfo);
+    announce(city[0]);
+    const wikiSections = cityInfo.sections();
+    if (wikiSections[0]) {
+      announce(wikiSections[0]._wiki.replace(/\n/g, ""));
     }
+    wikiSectionsCategories.forEach((s) => {
+      const sectionToRead = wikiSections.find((w) => w._title === s);
+      if (sectionToRead) {
+        announce(sectionToRead._wiki.replace(/\n/g, ""));
+      }
+    });
   };
 
   return (
@@ -166,34 +170,63 @@ const LocationInfo = () => {
       justifyContent={"center"}
     >
       <Grid item>
-        <Typography variant={"h4"}>{city}</Typography>
+        {city.length > 0 && city.map((c) => <Box key={c}>{c[0]}</Box>)}
       </Grid>
       <Grid item>
-        <Button variant="contained" onClick={handleAnnounce}>
-          Announce
+        <Button
+          variant="contained"
+          endIcon={<VolumeUpIcon />}
+          onClick={handleAnnounce}
+        >
+          Say it
         </Button>
       </Grid>
       <Grid item>
-        <Typography variant={"body1"}>{cityInfo}</Typography>
+        <Typography variant={"body1"}>
+          {cityInfo && cityInfo?.sections()?.[0]?._wiki}
+        </Typography>
       </Grid>
+      {cityInfo && (
+        <Grid item>
+          {wikiSectionsCategories.map((s) => (
+            <Typography variant="body2">
+              {cityInfo.sections().find((s) => s._title === s)?._wiki}
+            </Typography>
+          ))}
+        </Grid>
+      )}
       <Grid item>
         <strong>Street:</strong> {street}
       </Grid>
-      {uniqueCityNames.length > 0 && (
-        <Grid item>
-          <strong>Unique City Names:</strong>
-          <ul>
-            {uniqueCityNames.map((cityName) => (
-              <li key={cityName}>{cityName}</li>
-            ))}
-          </ul>
-        </Grid>
-      )}
       <Grid item>
         <Typography variant={"caption"}>
           Last refreshed: {lastRefreshed}
         </Typography>
       </Grid>
+      <Grid item>
+        <Button
+          variant="outlined"
+          onClick={() => setToggleShowUniqueCities(!showUniqueCities)}
+        >
+          Toggle
+        </Button>
+      </Grid>
+      {showUniqueCities && Object.keys(uniqueCityNames).length > 0 && (
+        <Grid item>
+          {Object.keys(uniqueCityNames).map((key) => {
+            return (
+              <Box key={`${key}${Object.keys(uniqueCityNames[key]).join(",")}`}>
+                <Typography variant="body1" sx={{ marginRight: "2rem" }}>
+                  {key}
+                </Typography>
+                <Typography variant="caption">
+                  {Object.keys(uniqueCityNames[key]).join(",")}
+                </Typography>
+              </Box>
+            );
+          })}
+        </Grid>
+      )}
     </Grid>
   );
 };
