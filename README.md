@@ -44,3 +44,5 @@ Set up your Google Maps API Key in the .env file:
 ```
 REACT_APP_GOOGLE_MAPS_API_KEY=your-api-key
 ```
+
+<img width="1214" alt="image" src="https://github.com/alialiayman/journey-jabber/assets/9623964/2fcd7edd-38e3-4bb4-89a7-aec985cd846b">
