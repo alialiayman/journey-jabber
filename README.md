@@ -39,3 +39,8 @@ Journey Jabber is a React application that adds a touch of excitement to your jo
    git clone https://github.com/your-username/journey-jabber.git
    cd journey-jabber
 ``
+
+Set up your Google Maps API Key in the .env file:
+```
+REACT_APP_GOOGLE_MAPS_API_KEY=your-api-key
+```
