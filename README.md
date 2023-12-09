@@ -1,21 +1,21 @@
-# Journey Jabber
+# Journey Jabber 🌍🔊
 
-Journey Jabber is a React application that helps you explore and enjoy your journey by announcing the city names, providing translations, and offering information about places of interest nearby.
+Journey Jabber is a React application that adds a touch of excitement to your journey by announcing city names, providing translations, and offering information about places of interest nearby.
 
-## Features
+## Features 🚀
 
-- **City Name Announcements**: Get real-time updates on the city you're currently in, announced using text-to-speech.
+- **City Name Announcements**: Get real-time updates on the city you're currently in, announced using text-to-speech 🗣️.
 
-- **Translation Assistance**: Discover the translation of the city name to enhance your linguistic experience.
+- **Translation Assistance**: Discover the translation of the city name to enhance your linguistic experience 🌐.
 
-- **Street Information**: Stay informed about the street you are on.
+- **Street Information**: Stay informed about the street you are on 🛣️.
 
 - **Pending Features**:
-  1. **Find Nearby Places**: Discover interesting places around you during your journey.
-  2. **Automatic Announcements on City Change**: Trigger announcements automatically when the city name changes (requires one-time activation).
-  3. **Explore More Information**: Gather additional details about the city from the internet and have them announced.
+  1. **Find Nearby Places**: Discover interesting places around you during your journey 📍.
+  2. **Automatic Announcements on City Change**: Trigger announcements automatically when the city name changes (requires one-time activation) 🏙️.
+  3. **Explore More Information**: Gather additional details about the city from the internet and have them announced 🌐.
 
-## Usage
+## Usage 🎉
 
 1. **City Announcements**: Launch the app to hear real-time city announcements.
 
@@ -23,7 +23,7 @@ Journey Jabber is a React application that helps you explore and enjoy your jour
 
 3. **Street Information**: Stay updated on the street you are currently on.
 
-## Pending Features Activation
+## Pending Features Activation ⏳
 
 1. **Find Nearby Places**: Coming soon!
 
@@ -32,12 +32,10 @@ Journey Jabber is a React application that helps you explore and enjoy your jour
 
 3. **Explore More Information**: Access additional city details by clicking the "More Info" button.
 
-## Installation
+## Installation 🛠️
 
 1. Clone the repository:
    ```bash
    git clone https://github.com/your-username/journey-jabber.git
    cd journey-jabber
-
-
-REACT_APP_GOOGLE_MAPS_API_KEY=your-api-key
+``
