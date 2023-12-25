@@ -4,18 +4,20 @@ import VolumeOffIcon from "@mui/icons-material/VolumeOff";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import { Box, IconButton, Stack, Typography } from "@mui/material";
 import announce, { stopAnnouncement } from "../shared/announce";
+import { getDisplayName } from "../shared/getDisplayName";
 import { RefreshOutlined } from "@mui/icons-material";
 
 const CityName = ({ cities }) => {
   const [isMuted, setIsMuted] = React.useState(true);
 
   const handleSpeak = (mute) => {
-    announce(cities[0]);
+    announce(getDisplayName(cities));
     setIsMuted(mute);
     if (mute) {
       stopAnnouncement();
     }
   };
+
   return (
     <Stack
       direction={"row"}
@@ -29,8 +31,8 @@ const CityName = ({ cities }) => {
         backgroundColor: "hsl(120,100%,95%)",
       }}
     >
-      <Typography variant="h4" sx={{color: 'hsl(120,100%,10%)'}}>
-        {cities && cities?.[0]?.[0]}
+      <Typography variant="h4" color="primary">
+        {cities && getDisplayName(cities)}
       </Typography>
       <Box>
       {isMuted && (

@@ -1,15 +1,16 @@
 import * as React from "react";
 
-import wtf from "wtf_wikipedia";
-import { styled } from "@mui/material/styles";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
-import MuiAccordion from "@mui/material/Accordion";
-import MuiAccordionSummary from "@mui/material/AccordionSummary";
-import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import VolumeOffIcon from "@mui/icons-material/VolumeOff";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
-import { IconButton, Stack, Typography, Box } from "@mui/material";
+import { Box, IconButton, Stack, Typography } from "@mui/material";
+import MuiAccordion from "@mui/material/Accordion";
+import MuiAccordionDetails from "@mui/material/AccordionDetails";
+import MuiAccordionSummary from "@mui/material/AccordionSummary";
+import { styled } from "@mui/material/styles";
+import wtf from "wtf_wikipedia";
 import announce, { stopAnnouncement } from "../shared/announce";
+import { getDisplayName } from "../shared/getDisplayName";
 
 const trivialTypes = ["political", "country", "continent", "locality"];
 const Accordion = styled((props) => (
@@ -49,7 +50,6 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 }));
 
 export default function Wikipedia({ cities, otherPlaces }) {
-  console.log("📢[wikipedia.jsx:51]: otherplaces: ", otherPlaces);
   const [expanded, setExpanded] = React.useState("wiki");
   const [wikiSections, setWikiSections] = React.useState([]);
   const [isMuted, setIsMuted] = React.useState(true);
@@ -71,8 +71,11 @@ export default function Wikipedia({ cities, otherPlaces }) {
 
   React.useEffect(() => {
     async function getWikipediaInfo() {
-      if (!cities || !cities[0] || !cities[0][0]) return;
-      const wikiString = cities[0][0].replace(/\d+/g, "").split(",")[0].trim();
+      if (!cities || !cities[0] || !getDisplayName(cities)) return;
+      const wikiString = getDisplayName(cities)
+        .replace(/\d+/g, "")
+        .split(",")[0]
+        .trim();
       const wikipediaData = await wtf.fetch(wikiString);
       setWikiSections(wikipediaData.sections());
     }

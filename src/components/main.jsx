@@ -36,7 +36,8 @@ const Main = () => {
     const queryGooglePlacesAPI = async (location) => {
       try {
         const response = await fetch(
-          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.lat},${location.lng}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`
+          // `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.lat},${location.lng}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`
+          `https://maps.googleapis.com/maps/api/geocode/json?latlng=37.9782,23.7449&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`
         );
 
         if (!response.ok) {
