@@ -77,7 +77,6 @@ export default function Wikipedia({ cities, otherPlaces }) {
         .split(",")[0]
         .trim();
       const wikipediaData = await wtf.fetch(wikiString);
-      console.log("📢[wikipedia.jsx:66]: wikipediaData: ", wikipediaData);
       setWikiSections(wikipediaData.sections());
     }
     getWikipediaInfo();
