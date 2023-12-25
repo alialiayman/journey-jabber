@@ -26,21 +26,24 @@ const OtherCities = ({ cities }) => {
       alignItems={"center"}
       sx={{
         height: "100%",
-        width: "100%",
+        width: "98%",
+        backgroundColor: "hsl(300,100%,95%)",
+        marginLeft: "1rem",
+        borderRadius: "1rem",
       }}
     >
       <Box>
-        <Typography variant="subtitle1" color={"textSecondary"}>
+        <Typography variant="subtitle1" sx={{color: 'hsl(300,100%,20%)'}}>
           {cities?.map((city) => city[0].split(",")[0]).join(", ")}
         </Typography>
       </Box>
       {isMuted && (
-        <IconButton onClick={() => handleSpeak(false)} color="primary">
+        <IconButton onClick={() => handleSpeak(false)} sx={{color: 'hsl(300,100%,20%)'}}>
           <VolumeUpIcon />
         </IconButton>
       )}
       {!isMuted && (
-        <IconButton onClick={() => handleSpeak(true)} color="secondary">
+        <IconButton onClick={() => handleSpeak(true)} sx={{color: 'hsl(300,100%,20%)'}}>
           <VolumeOffIcon />
         </IconButton>
       )}

@@ -53,6 +53,21 @@ export default function Wikipedia({ cities, otherPlaces }) {
   const [expanded, setExpanded] = React.useState("wiki");
   const [wikiSections, setWikiSections] = React.useState([]);
   const [isMuted, setIsMuted] = React.useState(true);
+  const [location, setLocation] = React.useState(null);
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const currentLocation = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      };
+
+      setLocation(currentLocation);
+    },
+    (error) => {
+      console.error("Error getting location:", error);
+    },
+    { enableHighAccuracy: true }
+  );
 
   React.useEffect(() => {
     async function getWikipediaInfo() {
@@ -91,7 +106,7 @@ export default function Wikipedia({ cities, otherPlaces }) {
         >
           <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
             <Stack direction={"row"} alignItems={"center"}>
-              <Typography>{section._title || "Wikipedia"}</Typography>
+              <Typography>{section._title || `[${Math.round(location.lat)}° from Equator/${Math.round(location.lng)}° from London]`}</Typography>
             </Stack>
           </AccordionSummary>
           <AccordionDetails>
