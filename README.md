@@ -1,48 +1,50 @@
 # Journey Jabber 🌍🔊
 
-Journey Jabber is a React application that adds a touch of excitement to your journey by announcing city names, providing translations, and offering information about places of interest nearby.
+A sleek React app that augments your trip in real time:
+- ✨ **AI-normalized place names** (more culturally correct than raw geocoding)
+- 🗣️ **Text-to-speech** announcements
+- 🛣️ **Current street info**
+- 🧭 **On-demand travel intel** (attractions, history, tips) — only when you click
+
+---
 
 ## Features 🚀
 
-- **City Name Announcements**: Get real-time updates on the city you're currently in, announced using text-to-speech 🗣️.
+- **AI City & Street Normalization** 🤖  
+  From GPS → Google Geocode → OpenAI **`/api/normalize`** → culturally correct city endonym + English exonym (if different), and a cleaned street name.
 
-- **Translation Assistance**: Discover the translation of the city name to enhance your linguistic experience 🌐.
+- **Live City Announcements** 🗣️  
+  Optionally speak the current city/street using the browser’s TTS.
 
-- **Street Information**: Stay informed about the street you are on 🛣️.
+- **On-Demand Travel Intel** 🧳  
+  Click to fetch **nearby attractions, history, tips & don’t-miss** via **`/api/intel`** (no background fees until you ask).
 
-- **Pending Features**:
-  1. **Find Nearby Places**: Discover interesting places around you during your journey 📍.
-  2. **Automatic Announcements on City Change**: Trigger announcements automatically when the city name changes (requires one-time activation) 🏙️.
-  3. **Explore More Information**: Gather additional details about the city from the internet and have them announced 🌐.
+- **Clean, responsive UI** 🧼  
+  Material UI cards, tidy layout, and simple controls.
 
-## Usage 🎉
+---
 
-1. **City Announcements**: Launch the app to hear real-time city announcements.
+## Quick Start ⚡
 
-2. **Translation**: View the translation of the city name on the screen.
+```bash
+# 1) Clone
+git clone https://github.com/your-username/journey-jabber.git
+cd journey-jabber
 
-3. **Street Information**: Stay updated on the street you are currently on.
+# 2) Install web app deps
+npm install
 
-## Pending Features Activation ⏳
+# 3) Install Cloud Functions deps
+cd functions
+npm install
+cd ..
 
-1. **Find Nearby Places**: Coming soon!
+# 4) Point Firebase CLI to your project
+firebase use --add  # or: firebase use <YOUR_PROJECT_ID>
 
-2. **Automatic Announcements**:
-   - Click the "Announce" button once to activate automatic announcements on city changes.
+# 5) Set your OpenAI key as a Firebase Secret (server-side only)
+firebase functions:secrets:set OPENAI_API_KEY --project <YOUR_PROJECT_ID>
 
-3. **Explore More Information**: Access additional city details by clicking the "More Info" button.
-
-## Installation 🛠️
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-username/journey-jabber.git
-   cd journey-jabber
-``
-
-Set up your Google Maps API Key in the .env file:
-```
-REACT_APP_GOOGLE_MAPS_API_KEY=your-api-key
-```
-
-<img width="1214" alt="image" src="https://github.com/alialiayman/journey-jabber/assets/9623964/2fcd7edd-38e3-4bb4-89a7-aec985cd846b">
+# 6) Build & deploy (functions + hosting)
+npm run build
+firebase deploy --only functions:normalize,functions:travelIntel,hosting --project <YOUR_PROJECT_ID>

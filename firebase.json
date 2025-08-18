@@ -8,9 +8,39 @@
     ],
     "rewrites": [
       {
+        "source": "/api/normalize",
+        "function": {
+          "functionId": "normalize",
+          "region": "us-central1"
+        }
+      },
+      {
+        "source": "/api/intel",
+        "function": {
+          "functionId": "travelIntel",
+          "region": "us-central1"
+        }
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
     ]
-  }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ],
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    }
+  ]
 }

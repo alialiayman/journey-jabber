@@ -1,0 +1,13 @@
+# functions/.gitignore
+node_modules/
+lib/
+.npm/
+.nyc_output/
+coverage/
+.eslintcache
+*.log
+*.local
+.env
+.env.*
+.secret.local
+.DS_Store
